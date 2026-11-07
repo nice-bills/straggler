@@ -96,7 +96,7 @@ export const contextCapTest = createServerFn({ method: "POST" }).middleware([req
     const words = Array.from({ length: n }, (_, i) => WORDS[i % WORDS.length]);
     words.push("pineapple");
     const prompt = `${words.join(" ")}\n\nWhat is the last word above?`;
-    const { headers_json, ...rec } = await callDolphin({ messages: [{ role: "user", content: prompt }], max_tokens: 16, timeoutMs: 180000 });
+    const { headers_json, ...rec } = await callDolphin({ messages: [{ role: "user", content: prompt }], max_tokens: 512, timeoutMs: 180000 });
     return { size: data.size, approx_tokens: n, chars: prompt.length, expected: "pineapple", ...rec };
   });
 

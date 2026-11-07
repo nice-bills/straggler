@@ -24,18 +24,23 @@ export default function ContextCapTest() {
   };
 
   return (
-    <TestCard title="Context cap test" desc="~50k → 200k → 500k tokens of filler, ending with “What is the last word above?” (expected: pineapple)"
+    <TestCard title="Context cap test" desc="~50k → 200k → 500k tokens of filler, ending with “What is the last word above?” (PASS if reply contains pineapple, max_tokens 512)"
       action={<Button size="sm" onClick={run} disabled={running}>{running && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Run test</Button>}>
       <div className="divide-y divide-border font-mono text-xs">
         {SIZES.map((s) => {
           const r = rows[s];
           return (
-            <div key={s} className="grid grid-cols-[60px_80px_1fr] gap-3 py-2">
+            <div key={s} className="grid grid-cols-[44px_64px_44px_1fr] gap-3 py-2">
               <span>{s}</span>
-              <span className={r?.status === "ok" ? "text-emerald-400" : r?.pending || !r ? "text-muted-foreground" : "text-red-400"}>
+              {r && !r.pending ? (
+                <span className={/pineapple/i.test(r.content || "") ? "text-emerald-400" : "text-red-400"}>
+                  {/pineapple/i.test(r.content || "") ? "PASS" : "FAIL"}
+                </span>
+              ) : <span className="text-muted-foreground">—</span>}
+              <span className={r?.status === "ok" ? "text-muted-foreground" : r?.pending || !r ? "text-muted-foreground" : "text-red-400"}>
                 {r?.pending ? "sending…" : r ? `${r.status}${r.http_code ? ` ${r.http_code}` : ""}` : "—"}
               </span>
-              <span className="break-all text-muted-foreground">
+              <span className="whitespace-pre-wrap break-all text-muted-foreground">
                 {r && !r.pending && (r.status === "ok" ? `“${r.content}” · ${fmtMs(r.latency_ms)} · ${r.in_tokens} in-tok` : r.error)}
               </span>
             </div>
