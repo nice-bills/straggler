@@ -41,11 +41,12 @@ export function verdictFor({ p50, p95, p99, n, timeout_count }) {
 
 export function histogram(sorted, bins = 24) {
   if (!sorted.length) return [];
-  const min = sorted[0];
-  const max = sorted[sorted.length - 1];
-  const width = Math.max(1, (max - min) / bins);
-  const out = Array.from({ length: bins }, (_, i) => ({ from: Math.round(min + i * width), count: 0 }));
-  for (const v of sorted) out[Math.min(bins - 1, Math.floor((v - min) / width))].count++;
+  // Log-spaced bins so a long tail stays visible next to the bulk.
+  const lo = Math.log(Math.max(1, sorted[0]));
+  const hi = Math.log(Math.max(2, sorted[sorted.length - 1]));
+  const width = Math.max(1e-6, (hi - lo) / bins);
+  const out = Array.from({ length: bins }, (_, i) => ({ from: Math.round(Math.exp(lo + i * width)), count: 0 }));
+  for (const v of sorted) out[Math.min(bins - 1, Math.floor((Math.log(Math.max(1, v)) - lo) / width))].count++;
   return out;
 }
 
