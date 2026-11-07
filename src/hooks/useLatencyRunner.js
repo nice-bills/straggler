@@ -27,7 +27,7 @@ export function useLatencyRunner() {
       const st = computeStats(all);
       await finalize({
         data: {
-          id: run.id, p50_ms: st.p50, p95_ms: st.p95, p99_ms: st.p99, error_rate: st.error_rate,
+          id: run.id, p50_ms: st.p50, p95_ms: st.p95, p99_ms: st.p99, median_tps: st.median_tps, p10_tps: st.p10_tps, p90_tps: st.p90_tps, error_rate: st.error_rate,
           timeout_count: st.timeout_count, fallback_suspect_count: st.fallback_suspect_count, total_cost_usd: st.cost, verdict: st.verdict,
         },
       });

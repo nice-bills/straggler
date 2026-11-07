@@ -3,6 +3,9 @@ import StatGrid from "@/components/lab/StatGrid";
 import VerdictBadge from "@/components/lab/VerdictBadge";
 import LatencyHistogram from "@/components/lab/LatencyHistogram";
 import SortedLatencyChart from "@/components/lab/SortedLatencyChart";
+import TpsHistogram from "@/components/lab/TpsHistogram";
+import GapCheck from "@/components/lab/GapCheck";
+import CallsTable from "@/components/lab/CallsTable";
 
 export default function RunResults({ title, calls, actions }) {
   const stats = computeStats(calls);
@@ -18,9 +21,16 @@ export default function RunResults({ title, calls, actions }) {
       </div>
       <StatGrid stats={stats} />
       <div className="grid gap-4 lg:grid-cols-2">
-        <LatencyHistogram sorted={stats.sorted} />
-        <SortedLatencyChart sorted={stats.sorted} />
+        <div className="min-w-0 space-y-4">
+          <LatencyHistogram sorted={stats.sorted} />
+          <TpsHistogram tps={stats.tps} />
+        </div>
+        <div className="min-w-0 space-y-4">
+          <SortedLatencyChart sorted={stats.sorted} />
+          <GapCheck tps={stats.tps} />
+        </div>
       </div>
+      <CallsTable calls={calls} />
     </section>
   );
 }

@@ -39,5 +39,6 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000 }) {
   const ended = Date.now();
   rec.ended_at = new Date(ended).toISOString();
   rec.latency_ms = ended - started;
+  if (rec.status === "ok" && rec.out_tokens > 0) rec.tokens_per_sec = rec.out_tokens / (rec.latency_ms / 1000);
   return rec;
 }

@@ -1,4 +1,4 @@
-const COLS = ["idx", "started_at", "ended_at", "latency_ms", "status", "http_code", "model_returned", "in_tokens", "out_tokens", "cost_usd", "fallback_suspect", "error", "headers_json"];
+const COLS = ["idx", "started_at", "ended_at", "latency_ms", "status", "http_code", "model_returned", "in_tokens", "out_tokens", "tokens_per_sec", "cost_usd", "fallback_suspect", "error", "headers_json"];
 
 const esc = (v) => {
   const s = v == null ? "" : String(v);

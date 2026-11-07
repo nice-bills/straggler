@@ -56,7 +56,7 @@ export const runLatencyBatch = createServerFn({ method: "POST" }).middleware([re
     const worker = async () => {
       while (next < data.count) {
         const i = next++;
-        const { content, ...rec } = await callDolphin({ messages, max_tokens: run.max_tokens });
+        const { content, ...rec } = await callDolphin({ messages, max_tokens: run.max_tokens, timeoutMs: run.max_tokens > 500 ? 120000 : 60000 });
         results[i] = { run_id: run.id, idx: data.start_idx + i, ...rec };
       }
     };
@@ -72,6 +72,9 @@ export const finalizeRun = createServerFn({ method: "POST" }).middleware([requir
       p50_ms: z.number().nullable(),
       p95_ms: z.number().nullable(),
       p99_ms: z.number().nullable(),
+      median_tps: z.number().nullable(),
+      p10_tps: z.number().nullable(),
+      p90_tps: z.number().nullable(),
       error_rate: z.number(),
       timeout_count: z.number().int(),
       fallback_suspect_count: z.number().int(),

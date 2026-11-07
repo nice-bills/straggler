@@ -18,8 +18,13 @@ export function computeStats(calls) {
   const timeout_count = calls.filter((c) => c.status === "timeout").length;
   const fallback_suspect_count = calls.filter((c) => c.fallback_suspect).length;
   const cost = calls.reduce((s, c) => s + (c.cost_usd || 0), 0);
+  const tps = calls.map((c) => c.tokens_per_sec).filter((v) => v > 0).sort((a, b) => a - b);
   return {
     n,
+    tps,
+    median_tps: percentile(tps, 50),
+    p10_tps: percentile(tps, 10),
+    p90_tps: percentile(tps, 90),
     p50,
     p95,
     p99,
@@ -50,6 +55,29 @@ export function histogram(sorted, bins = 24) {
   return out;
 }
 
+export function linearHistogram(sorted, bins = 30) {
+  if (!sorted.length) return [];
+  const min = sorted[0];
+  const width = Math.max(1e-6, (sorted[sorted.length - 1] - min) / bins);
+  const out = Array.from({ length: bins }, (_, i) => ({ from: Math.round((min + i * width) * 10) / 10, count: 0 }));
+  for (const v of sorted) out[Math.min(bins - 1, Math.floor((v - min) / width))].count++;
+  return out;
+}
+
+// Split sorted tokens/sec at the biggest gap between neighbours.
+export function gapCheck(tps) {
+  if (tps.length < 2) return null;
+  let cut = 0;
+  for (let i = 1; i < tps.length - 1; i++) if (tps[i + 1] - tps[i] > tps[cut + 1] - tps[cut]) cut = i;
+  const slow = tps.slice(0, cut + 1);
+  const fast = tps.slice(cut + 1);
+  const group = (g) => ({ count: g.length, share: g.length / tps.length, median: percentile(g, 50) });
+  const ratio = percentile(fast, 50) / percentile(slow, 50);
+  const bimodal = ratio >= 2 && Math.min(slow.length, fast.length) / tps.length >= 0.2;
+  return { fast: group(fast), slow: group(slow), ratio, bimodal };
+}
+
+export const fmtTps = (v) => (v == null ? "—" : v.toFixed(1));
 export const fmtMs = (v) => (v == null ? "—" : v >= 10000 ? `${(v / 1000).toFixed(1)}s` : `${Math.round(v)}ms`);
 export const fmtUsd = (v) => `$${(v || 0).toFixed(v < 0.01 ? 6 : 4)}`;
 export const fmtPct = (v) => `${((v || 0) * 100).toFixed(1)}%`;

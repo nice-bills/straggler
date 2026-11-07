@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 
 export const DEFAULT_FORM = { label: "", n_calls: 200, concurrency: 10, max_tokens: 64, prompt: "Reply with exactly the word OK." };
 
+const LONG_PRESET = { label: "Long", n_calls: 200, max_tokens: 1500, concurrency: 10, prompt: "Count from 1 to 400, one number per line. No other text." };
+
 export default function RunForm({ onRun, running }) {
   const [f, setF] = useState(DEFAULT_FORM);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
@@ -15,6 +17,7 @@ export default function RunForm({ onRun, running }) {
   };
   return (
     <form onSubmit={submit} className="space-y-4 rounded-md border border-border bg-card p-5">
+      <Button type="button" variant="outline" size="sm" disabled={running} onClick={() => setF(LONG_PRESET)}>Long output test</Button>
       <Field label="Label"><Input value={f.label} onChange={set("label")} placeholder="e.g. sat-evening c10" disabled={running} /></Field>
       <div className="grid grid-cols-3 gap-3">
         <Field label="Calls"><Input type="number" min={1} max={2000} value={f.n_calls} onChange={set("n_calls")} className="font-mono" disabled={running} /></Field>

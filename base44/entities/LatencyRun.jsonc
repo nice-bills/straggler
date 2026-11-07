@@ -34,6 +34,15 @@
     "p99_ms": {
       "type": "number"
     },
+    "median_tps": {
+      "type": "number"
+    },
+    "p10_tps": {
+      "type": "number"
+    },
+    "p90_tps": {
+      "type": "number"
+    },
     "error_rate": {
       "type": "number"
     },

@@ -47,6 +47,9 @@
     "out_tokens": {
       "type": "integer"
     },
+    "tokens_per_sec": {
+      "type": "number"
+    },
     "cost_usd": {
       "type": "number"
     },
