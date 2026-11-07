@@ -1,0 +1,152 @@
+{
+  "name": "TriageRun",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bench_run_id": {
+      "type": "string"
+    },
+    "repo_id": {
+      "type": "string"
+    },
+    "commit_sha": {
+      "type": "string"
+    },
+    "issue_url": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "single",
+        "hedged"
+      ],
+      "enumColors": [
+        "gray",
+        "blue"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "done",
+        "failed"
+      ],
+      "enumColors": [
+        "yellow",
+        "green",
+        "red"
+      ]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "time_to_valid_ms": {
+      "type": "number"
+    },
+    "winner_attempt_id": {
+      "type": "string"
+    },
+    "predicted_files": {
+      "type": "string",
+      "description": "JSON array of paths"
+    },
+    "label": {
+      "type": "string"
+    },
+    "cause": {
+      "type": "string"
+    },
+    "repro_check": {
+      "type": "string"
+    },
+    "reply_markdown": {
+      "type": "string"
+    },
+    "reply_ok": {
+      "type": "boolean"
+    },
+    "serv_cost_usd": {
+      "type": "number"
+    },
+    "dolphin_cost_usd": {
+      "type": "number"
+    },
+    "hit_at_1": {
+      "type": "boolean"
+    },
+    "hit_at_3": {
+      "type": "boolean"
+    },
+    "hit_at_5": {
+      "type": "boolean"
+    },
+    "error": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "mode"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "name": "Case",
+  "type": "object",
+  "properties": {
+    "repo_id": {
+      "type": "string"
+    },
+    "issue_number": {
+      "type": "integer"
+    },
+    "issue_title": {
+      "type": "string"
+    },
+    "issue_body": {
+      "type": "string"
+    },
+    "fix_pr_number": {
+      "type": "integer"
+    },
+    "base_sha": {
+      "type": "string"
+    },
+    "gold_files": {
+      "type": "string",
+      "description": "JSON array of paths"
+    },
+    "split": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test"
+      ],
+      "enumColors": [
+        "blue",
+        "purple"
+      ]
+    }
+  },
+  "required": [
+    "repo_id",
+    "issue_number",
+    "base_sha",
+    "split"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

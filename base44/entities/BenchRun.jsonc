@@ -1,0 +1,134 @@
+{
+  "name": "BenchRun",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test"
+      ],
+      "enumColors": [
+        "blue",
+        "purple"
+      ]
+    },
+    "n_cases": {
+      "type": "integer"
+    },
+    "n_failed": {
+      "type": "integer"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "single",
+        "hedged"
+      ],
+      "enumColors": [
+        "gray",
+        "blue"
+      ]
+    },
+    "p50_ms": {
+      "type": "number"
+    },
+    "p95_ms": {
+      "type": "number"
+    },
+    "hit_at_1": {
+      "type": "number"
+    },
+    "hit_at_3": {
+      "type": "number"
+    },
+    "hit_at_5": {
+      "type": "number"
+    },
+    "dolphin_cost_usd": {
+      "type": "number"
+    },
+    "serv_cost_usd": {
+      "type": "number"
+    },
+    "dolphin_in_tokens": {
+      "type": "integer"
+    },
+    "dolphin_out_tokens": {
+      "type": "integer"
+    },
+    "total_cost_usd": {
+      "type": "number"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "label",
+    "split",
+    "mode"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

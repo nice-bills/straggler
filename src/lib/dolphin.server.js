@@ -4,9 +4,11 @@ import { REQUESTED_MODEL } from "@/lib/stats";
 const URL = "https://lighthouse.dphn.ai/run/text-v/v1/chat/completions";
 
 // One timed Dolphin call. Never throws: failures come back as status "error" | "timeout".
-export async function callDolphin({ messages, max_tokens, timeoutMs = 60000 }) {
+// `signal` (optional) lets a caller cancel the call, e.g. the losing copy of a hedge.
+export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, signal }) {
   const started = Date.now();
   const ctrl = new AbortController();
+  signal?.addEventListener("abort", () => ctrl.abort());
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   const rec = { started_at: new Date(started).toISOString(), in_tokens: 0, out_tokens: 0, cost_usd: 0, fallback_suspect: false };
   try {
@@ -31,8 +33,8 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000 }) {
     rec.fallback_suspect =
       (!!rec.model_returned && rec.model_returned !== REQUESTED_MODEL) || rec.headers_json.toLowerCase().includes("openrouter");
   } catch (e) {
-    rec.status = e?.name === "AbortError" ? "timeout" : "error";
-    rec.error = rec.status === "timeout" ? `timeout after ${timeoutMs}ms` : String(e?.message || e).slice(0, 1000);
+    rec.status = e?.name === "AbortError" ? (signal?.aborted ? "cancelled" : "timeout") : "error";
+    rec.error = rec.status === "timeout" ? `timeout after ${timeoutMs}ms` : rec.status === "cancelled" ? "cancelled" : String(e?.message || e).slice(0, 1000);
   } finally {
     clearTimeout(timer);
   }

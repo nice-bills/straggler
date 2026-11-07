@@ -1,0 +1,111 @@
+{
+  "name": "Attempt",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "case_id": {
+      "type": "string"
+    },
+    "copy_index": {
+      "type": "integer"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "latency_ms": {
+      "type": "number"
+    },
+    "in_tokens": {
+      "type": "integer"
+    },
+    "out_tokens": {
+      "type": "integer"
+    },
+    "tokens_per_sec": {
+      "type": "number"
+    },
+    "cost_usd": {
+      "type": "number"
+    },
+    "raw_output": {
+      "type": "string"
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "invalid_reason": {
+      "type": "string"
+    },
+    "cancelled": {
+      "type": "boolean"
+    },
+    "winner": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "copy_index"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
