@@ -1,0 +1,124 @@
+{
+  "name": "LatencyRun",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string"
+    },
+    "n_calls": {
+      "type": "integer"
+    },
+    "concurrency": {
+      "type": "integer"
+    },
+    "max_tokens": {
+      "type": "integer"
+    },
+    "prompt": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "p50_ms": {
+      "type": "number"
+    },
+    "p95_ms": {
+      "type": "number"
+    },
+    "p99_ms": {
+      "type": "number"
+    },
+    "error_rate": {
+      "type": "number"
+    },
+    "timeout_count": {
+      "type": "integer"
+    },
+    "fallback_suspect_count": {
+      "type": "integer"
+    },
+    "total_cost_usd": {
+      "type": "number"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "FAT",
+        "FLAT",
+        "MIXED"
+      ],
+      "enumColors": [
+        "red",
+        "green",
+        "yellow"
+      ]
+    }
+  },
+  "required": [
+    "label",
+    "n_calls",
+    "concurrency",
+    "max_tokens",
+    "prompt"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
