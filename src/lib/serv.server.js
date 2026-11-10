@@ -1,8 +1,8 @@
 import { secrets } from "base44:runtime";
 
 const URL = "https://inference-api.openserv.ai/v1/chat/completions";
-// Assumed gpt-5.4-mini list price, $/M tokens. Adjust if SERV bills differently.
-export const SERV_PRICE = { in: 0.75, out: 4.5 };
+// SERV rate for gpt-5.4-mini, $/M tokens: https://docs.openserv.ai/serv-reasoning/models (2026-11-09)
+export const SERV_PRICE = { in: 1.0, out: 6.0 };
 
 // prompt guard on every call; shadow agent (with `shadowHint`) on final-reply calls.
 export async function callServ({ messages, shadowHint, max_completion_tokens = 1000 }) {
