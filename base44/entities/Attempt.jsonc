@@ -22,6 +22,9 @@
     "latency_ms": {
       "type": "number"
     },
+    "ttft_ms": {
+      "type": "number"
+    },
     "in_tokens": {
       "type": "integer"
     },

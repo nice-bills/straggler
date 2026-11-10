@@ -16,11 +16,34 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, sig
       method: "POST",
       signal: ctrl.signal,
       headers: { "content-type": "application/json", authorization: `Bearer ${secrets.get("DOLPHIN_API_KEY")}` },
-      body: JSON.stringify({ model: REQUESTED_MODEL, messages, max_tokens }),
+      // Streamed: Dolphin sends keepalives, so long calls don't die at Cloudflare's ~125 s idle limit (HTTP 524).
+      body: JSON.stringify({ model: REQUESTED_MODEL, messages, max_tokens, stream: true, stream_options: { include_usage: true } }),
     });
-    const text = await res.text();
+    let text = "";
     let body = null;
-    try { body = JSON.parse(text); } catch {}
+    if (res.ok && res.headers.get("content-type")?.includes("text/event-stream")) {
+      body = { choices: [{ message: { content: "" } }] };
+      let buf = "";
+      for await (const chunk of res.body.pipeThrough(new TextDecoderStream())) {
+        buf += chunk;
+        const lines = buf.split("\n");
+        buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith("data:") || line.includes("[DONE]")) continue;
+          let ev;
+          try { ev = JSON.parse(line.slice(5)); } catch { continue; }
+          if (ev.error) throw new Error(ev.error.message || JSON.stringify(ev.error));
+          const d = ev.choices?.[0]?.delta;
+          if (rec.ttft_ms == null && (d?.content || d?.reasoning)) rec.ttft_ms = Date.now() - started;
+          if (d?.content) body.choices[0].message.content += d.content;
+          if (ev.model) body.model = ev.model;
+          if (ev.usage) body.usage = ev.usage;
+        }
+      }
+    } else {
+      text = await res.text();
+      try { body = JSON.parse(text); } catch {}
+    }
     rec.http_code = res.status;
     rec.headers_json = JSON.stringify(Object.fromEntries(res.headers.entries()));
     rec.model_returned = body?.model || "";

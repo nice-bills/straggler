@@ -77,7 +77,7 @@ export async function runTriage(b, input) {
   );
   const saved = await b.entities.Attempt.bulkCreate(h.attempts.map((a) => ({
     run_id: run.id, case_id: c?.id, copy_index: a.copy_index, started_at: a.res.started_at, finished_at: a.res.ended_at,
-    latency_ms: a.res.latency_ms, in_tokens: a.res.in_tokens, out_tokens: a.res.out_tokens, tokens_per_sec: a.res.tokens_per_sec,
+    latency_ms: a.res.latency_ms, ttft_ms: a.res.ttft_ms, in_tokens: a.res.in_tokens, out_tokens: a.res.out_tokens, tokens_per_sec: a.res.tokens_per_sec,
     cost_usd: a.res.cost_usd, raw_output: (a.res.content || a.res.error || "").slice(0, 20000),
     valid: !!a.valid, invalid_reason: a.invalid_reason || undefined, cancelled: !!a.cancelled, winner: !!a.winner,
   })));

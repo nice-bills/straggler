@@ -1,7 +1,7 @@
 // Pure triage logic shared by the server and the Self-check page.
 
 export const SYSTEM_PROMPT =
-  'You are triaging a GitHub issue. Use only the repository below. Reply with strict JSON: {"files": [up to 5 repo paths, most likely first], "cause": "...", "repro_check": "...", "label": "bug|feature|docs|question"}';
+  'You are triaging a GitHub issue. Use only the repository below. Reply with strict JSON: {"files": [up to 5 repo paths of the source files a fix would change, most likely first; no tests, docs or changelogs], "cause": "...", "repro_check": "...", "label": "bug|feature|docs|question"}';
 
 export function parseJson(text) {
   const s = (text || "").trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");
