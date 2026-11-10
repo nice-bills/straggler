@@ -56,7 +56,8 @@ async function writeReply(issue, parsed, fileList) {
 
 export async function runTriage(b, input) {
   const { c, repo, sha, issue } = await resolve(b, input);
-  const snap = await getOrBuildSnapshot(b, repo, sha);
+  // One retry: a transient GitHub "fetch failed" while building the snapshot otherwise fails the run before any Dolphin call.
+  const snap = await getOrBuildSnapshot(b, repo, sha).catch(() => getOrBuildSnapshot(b, repo, sha));
   const packed = await (await fetch(snap.packed_text_url)).text();
   const fileList = JSON.parse(snap.file_list);
   const fileSet = new Set(fileList);
@@ -64,7 +65,8 @@ export async function runTriage(b, input) {
     { role: "system", content: SYSTEM_PROMPT },
     { role: "user", content: `${packed}\n\n=== ISSUE #${issue.number} ===\nTitle: ${issue.title}\n\n${issue.body}` },
   ];
-  const max_tokens = 1500;
+  // 1500 cut replies off mid-JSON or left empty content (out_tokens hit the cap); 4000 leaves room.
+  const max_tokens = 4000;
   const timeoutMs = snap.est_tokens > 20000 || max_tokens > 500 ? 180000 : 60000;
   const run = await b.entities.TriageRun.create({
     case_id: c?.id || null, bench_run_id: input.bench_run_id, repo_id: repo.id, commit_sha: sha, mode: input.mode, status: "running",
