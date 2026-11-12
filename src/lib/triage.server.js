@@ -66,15 +66,20 @@ export async function runTriage(b, input) {
     { role: "user", content: `${packed}\n\n=== ISSUE #${issue.number} ===\nTitle: ${issue.title}\n\n${issue.body}` },
   ];
   // 1500 cut replies off mid-JSON or left empty content (out_tokens hit the cap); 4000 leaves room.
-  const max_tokens = 4000;
+  const max_tokens = 8000;
   const timeoutMs = snap.est_tokens > 20000 || max_tokens > 500 ? 180000 : 60000;
   const run = await b.entities.TriageRun.create({
     case_id: c?.id || null, bench_run_id: input.bench_run_id, repo_id: repo.id, commit_sha: sha, mode: input.mode, status: "running",
     issue_url: input.issue_url || `https://github.com/${repo.owner}/${repo.name}/issues/${issue.number}`,
   });
   const h = await hedge(
-    (i, signal) => callDolphin({ messages, max_tokens, timeoutMs, signal }),
-    (r) => (r.status === "ok" ? validateTriage(r.content, fileSet) : { ok: false, reason: r.error || r.status }),
+    // reasoning_effort "low" keeps hidden reasoning from spending the whole output budget (probed: 0 reasoning tokens vs ~10 at default).
+    (i, signal) => callDolphin({ messages, max_tokens, timeoutMs, signal, extra: { reasoning_effort: "low" } }),
+    (r) => {
+      if (r.status !== "ok") return { ok: false, reason: r.error || r.status };
+      if (!r.content && r.finish_reason === "length") return { ok: false, reason: "output budget spent on reasoning" };
+      return validateTriage(r.content, fileSet);
+    },
     input.mode,
   );
   const saved = await b.entities.Attempt.bulkCreate(h.attempts.map((a) => ({

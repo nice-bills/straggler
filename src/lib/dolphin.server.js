@@ -5,7 +5,8 @@ const URL = "https://lighthouse.dphn.ai/run/text-v/v1/chat/completions";
 
 // One timed Dolphin call. Never throws: failures come back as status "error" | "timeout".
 // `signal` (optional) lets a caller cancel the call, e.g. the losing copy of a hedge.
-export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, signal }) {
+// `extra` (optional) is merged into the request body before the core fields, e.g. { reasoning_effort: "low" }.
+export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, signal, extra = {} }) {
   const started = Date.now();
   const ctrl = new AbortController();
   signal?.addEventListener("abort", () => ctrl.abort());
@@ -17,7 +18,7 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, sig
       signal: ctrl.signal,
       headers: { "content-type": "application/json", authorization: `Bearer ${secrets.get("DOLPHIN_API_KEY")}` },
       // Streamed: Dolphin sends keepalives, so long calls don't die at Cloudflare's ~125 s idle limit (HTTP 524).
-      body: JSON.stringify({ model: REQUESTED_MODEL, messages, max_tokens, stream: true, stream_options: { include_usage: true } }),
+      body: JSON.stringify({ ...extra, model: REQUESTED_MODEL, messages, max_tokens, stream: true, stream_options: { include_usage: true } }),
     });
     let text = "";
     let body = null;
@@ -36,6 +37,7 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, sig
           const d = ev.choices?.[0]?.delta;
           if (rec.ttft_ms == null && (d?.content || d?.reasoning)) rec.ttft_ms = Date.now() - started;
           if (d?.content) body.choices[0].message.content += d.content;
+          if (ev.choices?.[0]?.finish_reason) body.choices[0].finish_reason = ev.choices[0].finish_reason;
           if (ev.model) body.model = ev.model;
           if (ev.usage) body.usage = ev.usage;
         }
@@ -51,6 +53,8 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, sig
     rec.out_tokens = body?.usage?.completion_tokens || 0;
     rec.cost_usd = (rec.in_tokens * 0.01) / 1e6 + (rec.out_tokens * 0.07) / 1e6;
     rec.content = body?.choices?.[0]?.message?.content ?? "";
+    rec.finish_reason = body?.choices?.[0]?.finish_reason ?? null;
+    rec.reasoning_tokens = body?.usage?.completion_tokens_details?.reasoning_tokens || 0;
     rec.status = res.ok && body?.choices ? "ok" : "error";
     if (rec.status === "error") rec.error = (body?.error?.message || text || `HTTP ${res.status}`).slice(0, 1000);
     rec.fallback_suspect =

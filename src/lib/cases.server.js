@@ -15,12 +15,12 @@ export async function buildCases(b, repo, maxCases) {
   } while (cursor);
 
   const picked = [];
-  outer: for (let p = 1; p <= 10; p++) {
+  outer: for (let p = 1; p <= 20; p++) {
     const prs = await gh(`${base}/pulls?state=closed&sort=created&direction=desc&per_page=50&page=${p}`);
     if (!prs.length) break;
     for (const pr of prs) {
       if (!pr.merged_at) continue;
-      const n = Number(FIX_REF.exec(pr.body || "")?.[1]);
+      const n = Number(FIX_REF.exec(`${pr.title}\n${pr.body || ""}`)?.[1]);
       if (!n || existing.has(n) || picked.some((c) => c.issue_number === n)) continue;
       const issue = await gh(`${base}/issues/${n}`).catch(() => null);
       if (!issue || issue.pull_request || new Date(issue.created_at) >= new Date(pr.created_at)) continue;
