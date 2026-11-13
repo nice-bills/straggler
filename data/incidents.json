@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Wasabi Protocol",
+    "chain_id": 1,
+    "proxy": "0x8e0edfd6d15f858adbb41677b82ab64797d5afc0",
+    "prev_impl": "0x8e19c040b4c1c8d2a63e6cb375f01ab65d2ddc04",
+    "next_impl": "0x1f392a1f7c737aa4777ed3dc608ec153dfd39c7e",
+    "tx": "0xbabbfd5dc3a448244b1797928c69001726106c241f29e22b979a8bc01807c317",
+    "time": "2026-04-30T07:59:35Z",
+    "loss_usd": 2550000,
+    "what_changed": "Deployer key (wasabideployer.eth = 0x5c629f8c0b5368f523c85bfe79d2a8efb64fb0c8) was compromised; grantRole delay was 0 and there was no multisig or timelock, so the attacker pushed UUPS upgrades and used them immediately. In this single tx the WasabiLongPool proxy was upgraded from 0x8e19c040... (set 2026-02-25) to the malicious 0x1f392a1f... and drained ~226 ETH via strategyDeposit into an attacker-controlled fake strategy. Separately, 8 ETH vault proxies were drained via admin strategyDeposit without upgrade events (vault drain tx 0xcd77423f...). loss_usd is the ~$2.55M Ethereum leg ($2M vault drain + LongPool); protocol total ~$5.9M across Ethereum/Base/Berachain/Blast.",
+    "source": "https://rekt.news/wasabi-protocol-rekt; QuillAudits report; on-chain Upgraded logs on 0x8e0edfd6... (Routescan Etherscan API)"
+  },
+  {
+    "name": "Zoth",
+    "chain_id": 1,
+    "proxy": "0x82f3a0392f58c50fa90542519832471bae93e43e",
+    "prev_impl": "0x7cb771ca7b9abcccfdc19564e7260795cd51629e",
+    "next_impl": "0xc89d7894341e13d5067d003af5346b257d861f56",
+    "tx": "0xb2335f7bf58abbcaa006d0a2bed7db2c64a5dabed56fb1759260adc012c49abe",
+    "time": "2025-03-21T08:46:59Z",
+    "loss_usd": 8400000,
+    "what_changed": "Admin key was compromised and the USD0PPSubVaultUpgradeable proxy was swapped from 0x7cb771ca... (set 2025-03-03) to malicious 0xc89d7894...; the attacker then used privileged functions of the new implementation to withdraw 8.85M USD0++ (~$8.4M).",
+    "source": "https://rekt.news/zoth-rekt; SlowMist and Cyvers alerts; on-chain Upgraded logs (Routescan Etherscan API)"
+  },
+  {
+    "name": "Radiant Capital",
+    "chain_id": 42161,
+    "proxy": "0xf4b1486dd74d07706052a33d31d7c0aafd0659e1",
+    "prev_impl": "0x453213a019585764ecf11075ce600bf8ec7d8c16",
+    "next_impl": "0xf0c0a1a19886791c2dd6af71307496b1e16aa232",
+    "tx": "0x7856552db409fe51e17339ab1e0e1ce9c85d68bf0f4de4c110fc4e372ea02fb1",
+    "time": "2024-10-16T17:42:17Z",
+    "loss_usd": 50000000,
+    "what_changed": "The 3/11 Safe multisig was compromised via INLETDRIFT malware; in the attack tx the attacker transferred ownership of the lending pool proxy and upgraded it from 0x453213a0... to a malicious implementation (0xf0c0a1a1..., deployed ~14 days earlier by 0x57ba8957... on Arbitrum/BSC/Base), then drained the pools. The same attack drained the BSC deployment (tx 0xd97b93f633aee356d992b49193e60a571b8c466bf46aaf072368f975dc11841c). loss_usd is the combined BSC+Arbitrum total of $50M+; no clean per-chain split was published.",
+    "source": "https://rekt.news/radiant-capital-rekt2; Radiant Capital post-mortem; on-chain receipt/getLogs via arb1.arbitrum.io RPC (Upgraded event in attack tx; prior impl at block 240495655)"
+  },
+  {
+    "name": "Bedrock uniBTC",
+    "chain_id": 1,
+    "proxy": "0x047d41f2544b7f63a8e991af2068a363d210d6da",
+    "prev_impl": "0x47237218650608082d41b8b707305da2be108e45",
+    "next_impl": "0xc0c9e78bfc3996e8b68d872b29340816495d7e89",
+    "tx": "0xd4454262cbd896750c20a34d0d739666d74f2daf729b2c857a81ad85d54760b9",
+    "time": "2024-08-19T09:16:59Z",
+    "loss_usd": 2000000,
+    "what_changed": "Legitimate upgrade set implementation 0xc0c9e78b... whose mint() minted uniBTC 1:1 against native ETH deposits (code written for BTC-native chains, deployed to Ethereum). Exploited on 2024-09-08 (attack tx 0x725f0d65340c859e0f64e72ca8260220c526c3e0ccde530004160809f6177940) by minting ~1,200 uniBTC from flash ETH deposits (~$1.8-2M; loss_usd uses the ~$2M estimate). Dedaub disclosed the root cause pre-exploit and said the vulnerable contract was deployed 'under two days' before the exploit, so whether the Jul 11 or Aug 19 upgrade introduced the bug is not fully pinned - 0xc0c9e78b was the implementation active at exploit time. Post-attack fix upgrade to 0xcb674fbb... on 2024-10-01.",
+    "source": "Dedaub Bedrock disclosure (dedaub.com); on-chain Upgraded log history of 0x047d41f2... (Routescan Etherscan API)"
+  },
+  {
+    "name": "Pike Finance",
+    "chain_id": 1,
+    "proxy": "0xfc7599cffea9de127a9f9c748ccb451a34d2f063",
+    "prev_impl": "0xb30c120eb92c120bf11b358b4b9961e6679b6ae7",
+    "next_impl": "0x1da4bc596bfb1087f2f7999b0340fcba03c47fbd",
+    "tx": "0xe2912b8bf34d561983f2ae95f34e33ecc7792a2905a3e317fcc98052bce66431",
+    "time": "2024-04-30T22:19:11Z",
+    "loss_usd": 1600000,
+    "what_changed": "Storage-layout / initialized-variable misalignment let the attacker re-initialize the contract and use Pike's upgradeToAndCall path to install a malicious implementation (prev_impl 0xb30c120e... had been set 2024-04-28), then drain funds; ~$1.6M on the Ethereum leg of a multi-chain attack (~$1.9M total including OP/ARB legs).",
+    "source": "https://rekt.news/pike-rekt; on-chain Upgraded logs on 0xfc7599cf... (Routescan Etherscan API)"
+  },
+  {
+    "name": "Unizen",
+    "chain_id": 1,
+    "proxy": "0xd3f64baa732061f8b3626ee44bab354f854877ac",
+    "prev_impl": "0xf92ecf887a30d9afde76f5c220cc6dead59df540",
+    "next_impl": "0xa051fc7d38baa0ace811ad9de4e9f7024e5d8a30",
+    "tx": "0x43085d54f5afb5c83b28f9c1071c6507879191a2ed84e9bbe2544fc2c09da200",
+    "time": "2024-03-08T15:21:35Z",
+    "loss_usd": 2100000,
+    "what_changed": "Buggy (not malicious) upgrade by the team itself: a gas-optimization revision of the Trade Aggregator introduced an unverified external call, letting an attacker invoke the aggregator to drain tokens from users holding approvals (~$2.1M). The team rolled back to the previous implementation 0xf92ecf88... on 2024-03-09T02:55:59Z (tx 0x926600e07748c7555ec3e5e99883241c8d669524d7770c2d5df12920ae8f7817).",
+    "source": "https://rekt.news/unizen-rekt; on-chain Upgraded logs on 0xd3f64baa... (Routescan Etherscan API)"
+  },
+  {
+    "name": "OKX DEX",
+    "chain_id": 1,
+    "proxy": "0x55b35bf627944396f9950dd6bddadb5218110c76",
+    "prev_impl": "0x803c8e60336c62f630bad14990290fcdd4021709",
+    "next_impl": "0x5c4794d9f34fb74903cfafb3cff6e4054b90c167",
+    "tx": "0x22ebd267d7344780e6d63cf3a76bab57b8f8fa41cf58df1a2e1707d75d8bee89",
+    "time": "2023-12-12T21:57:07Z",
+    "loss_usd": 2700000,
+    "what_changed": "The ProxyAdmin owner key (0xc82ea2af...) was compromised; the owner pushed two malicious upgrades the same night - first to 0x5c4794d9... (21:57:07 UTC, this tx), then to 0xf36c407f... (23:13:59 UTC, tx 0xc6a5a7bc31bbc9a7530189e718f7ed96789fa65c56c3a4a08079a95074e280c8). The new implementations could invoke claimTokens on the OKX DEX contract (0x70cbb871...), siphoning tokens from wallets that had approved the deprecated proxy; ~$2.7M drained (attacker 0xfacf375a...).",
+    "source": "https://rekt.news/okx-dex-rekt (SlowMist analysis); on-chain Upgraded log history of 0x55b35bf6... (Routescan Etherscan API)"
+  },
+  {
+    "name": "DeltaPrime",
+    "chain_id": 42161,
+    "proxy": "0xdeab10eb04525ad8eb466d7a3634a4fb27040147",
+    "prev_impl": "0x2af68733c1e2100d6620a2aa4d88d27c9d3523d7",
+    "next_impl": "0xd4ca224a176a59ed1a346fa86c3e921e01659e73",
+    "tx": "0x19e737dcf9798d9e4d432968f0e47672260fa29b7e35a5844fcdb6c6aa45dd89",
+    "time": "2024-09-16T04:14:04Z",
+    "loss_usd": 5980000,
+    "what_changed": "The compromised admin EOA 0x40e4ff9e018462ce71fa34abdfa27b8c5e2b1afb upgraded five DepositIndex proxies to one malicious implementation (0xd4ca224a...) within 8 blocks (04:14:02-04:14:04 UTC): 0x56f67141..., 0x7789bff8..., 0x5c671dae..., this proxy, and 0x8894df06... (txs 0x2e6748e9..., 0xbf4a57c5..., 0xc5262ec8..., this tx, 0xda785b1d...). The malicious DepositIndex logic allowed artificial interest inflation, draining the Savings pools for $5.98M. prev_impl was recovered from the team's own restore transaction 0x459ac0dfe1ed05074612e839a9f739f8770b68e3416eac59852278f7a82a60dc (~06:50 UTC), whose Upgraded event returned this proxy to 0x2af68733...",
+    "source": "DeltaPrime post-mortem (medium.com/@DeltaPrimeDefi/deltaprime-post-mortem-reimbursement-plan-3e5d6086dd2e); Merkle Science flow-of-funds analysis; on-chain receipts/logs via arb1.arbitrum.io RPC"
+  }
+]
