@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Aave V3 Pool (Ethereum) v3.3 Umbrella release",
+    "chain_id": 1,
+    "proxy": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+    "prev_impl": "0xef434e4573b90b6ecd4a00f4888381e4d0cc5ccd",
+    "next_impl": "0x9aeb8aaa1ca38634aa8c0c8933e7fb4d61091327",
+    "tx": "0x8e51d324a562bf6ad767f10bff457e310d5b89f76482bc68c05e977ad4c5100b",
+    "time": "2025-02-24T15:23:59Z",
+    "why_benign": "Scheduled protocol release executed by Aave governance: payload 249 on the PayloadsController pointed the Pool proxy at the audited v3.3 PoolInstance. Only the implementation slot changed; proxy admin and PoolConfigurator were untouched in the same transaction.",
+    "source": "https://governance.aave.com/t/bgd-aave-v3-3-feat-umbrella/20129"
+  },
+  {
+    "name": "Aave V3 Pool (Ethereum) v3.4 release",
+    "chain_id": 1,
+    "proxy": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+    "prev_impl": "0x9aeb8aaa1ca38634aa8c0c8933e7fb4d61091327",
+    "next_impl": "0x947f0054faed3481ff4e76ca35f12fbe36cc665b",
+    "tx": "0x6f45f51fa5dd0246298f2e6284c43e0c57ef5e6b646ee1dfcd67f3f4f11dacd9",
+    "time": "2025-07-03T14:42:23Z",
+    "why_benign": "Planned v3.4 rollout (ARFC passed, AIP executed) swapping in the audited v3.4 PoolInstance. Single Upgraded log from the proxy, no admin or role change.",
+    "source": "https://governance.aave.com/t/arfc-bgd-aave-v3-4/21572"
+  },
+  {
+    "name": "Aave V3 Pool (Ethereum) v3.5 rounding fix release",
+    "chain_id": 1,
+    "proxy": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+    "prev_impl": "0x947f0054faed3481ff4e76ca35f12fbe36cc665b",
+    "next_impl": "0x97287a4f35e583d924f78ad88db8afce1379189a",
+    "tx": "0xa17567fa201a78b66c43e6ab178559f8c1d5d308fe944c0bd2c39b5e585097dc",
+    "time": "2025-08-07T10:27:23Z",
+    "why_benign": "Direct-to-AIP v3.5 (\"v3.4 part 2\") executed: explicit rounding-direction fixes shipped as a new PoolInstance implementation. Only the implementation address changed.",
+    "source": "https://governance.aave.com/t/direct-to-aip-bgd-aave-v3-5-v3-4-part-2/22639"
+  },
+  {
+    "name": "Compound III cUSDCv3 price-feed update (proposal 488)",
+    "chain_id": 1,
+    "proxy": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+    "prev_impl": "0xb5dcf2711cf76bbe9d99f687c59a5421ca2ce13b",
+    "next_impl": "0xdf2cd7552610e3b5cddd410ca89a172ac0ad444c",
+    "tx": "0xacd95981f12369778d6d022d967539bcd75f5c7443b29c0bec5a189c074fc611",
+    "time": "2025-10-23T08:25:59Z",
+    "why_benign": "Governance proposal 488 (\"Update price feeds in cUSDCv3 on Mainnet with CAPO and Chainlink SVR\") executed by the Compound governor. Comet price feeds are immutable per implementation, so the proposal deployed a new CometWithExtendedAssetList and upgraded the proxy to it; market storage is preserved by Comet's upgrade path.",
+    "source": "https://www.tally.xyz/gov/compound/proposal/488"
+  },
+  {
+    "name": "Compound III cWETHv3 supply-cap update (proposal 447)",
+    "chain_id": 1,
+    "proxy": "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
+    "prev_impl": "0xeb58c62cac39b3f7b11fbeaf8494613e2a9fc943",
+    "next_impl": "0x64baee72de7d32fbb32ff3833b5000c4236256cc",
+    "tx": "0xe7a6e7b41c503ac3554bb12a4621f3a21197908050df8cc9612ff0b5757b74d6",
+    "time": "2025-06-19T13:50:35Z",
+    "why_benign": "Governance proposal 447 ([Gauntlet] supply cap recommendations, 6/10/25) executed by the Compound governor. Comet caps are immutable per implementation, so the approved caps were applied by upgrading the proxy to a newly deployed Comet implementation.",
+    "source": "https://www.tally.xyz/gov/compound/proposal/447"
+  },
+  {
+    "name": "SparkLend Pool maintenance spell (Maker executive, 2024-04-22)",
+    "chain_id": 1,
+    "proxy": "0xC13e21B648A5Ee794902342038FF3aDAB66BE987",
+    "prev_impl": "0xb40f6d584081ac2b0fd84c846dba3c1417889304",
+    "next_impl": "0x5ae329203e00f76891094dcfedd5aca082a50e1b",
+    "tx": "0x836e72450183c56cb05009ee7ee64fff6b957ca3777264b35b5870c3431ba5ab",
+    "time": "2024-04-24T21:23:35Z",
+    "why_benign": "The approved MakerDAO executive (\"...Spark Proxy Spell - April 22, 2024\") triggered the Spark Proxy Spell on Ethereum, which upgraded the SparkLend Pool proxy to a new audited Pool implementation. Governance-controlled proxy admin unchanged.",
+    "source": "https://vote.makerdao.com/executive/template-executive-vote-stability-fee-changes-dsr-decrease-march-2024-ad-compensation-q1-2024-avc-member-participation-rewards-aave-sparklend-revenue-share-whitelist-new-address-in-the-rwa015-a-output-conduit-usdp-input-conduit-management-spark-proxy-spell-april-22-2024"
+  },
+  {
+    "name": "Arbitrum Outbox BoLD upgrade",
+    "chain_id": 1,
+    "proxy": "0x0B9857ae2D4A3DBe74ffE1d7DF045bb7F96E4840",
+    "prev_impl": "0x0ea7372338a589e7f0b00e463a53aa464ef04e17",
+    "next_impl": "0x3fff9bdc3ce99d3d587b0d06aa7c4a10075193b4",
+    "tx": "0xe9788a104f8443b5900e54f8c887f0522d121487fc343a1ff90e1e6ed987967e",
+    "time": "2025-02-12T14:00:11Z",
+    "why_benign": "BoLD AIP payload executed by the L1 Arbitrum Timelock after the governance vote, swapping the Outbox implementation for the BoLD-compatible version. Part of Arbitrum's announced permissionless-validation rollout, not an unscheduled admin action.",
+    "source": "https://forum.arbitrum.foundation/t/aip-bold-permissionless-validation-for-arbitrum/23232"
+  },
+  {
+    "name": "Optimism Portal (Ethereum) Upgrade 16 / Interop-ready contracts",
+    "chain_id": 1,
+    "proxy": "0xbEb5Fc579115071764c7423A4f12eDde41f106Ed",
+    "prev_impl": "0xb443da3e07052204a02d630a8933dac05a0d6fb4",
+    "next_impl": "0xefed7f38bb9be74bba583a1a5b7d0fe7c9d5787a",
+    "tx": "0x46acdce174c8d83ebe2f208d8c76c867e75617483d64c3e407f69ae2f9868716",
+    "time": "2025-07-24T17:47:23Z",
+    "why_benign": "OP governance executed Upgrade 16 at the published activation time (17:30 UTC on 2025-07-24), replacing the OptimismPortal2 implementation as described in the upgrade notice. Proxy admin (OP Safe) unchanged.",
+    "source": "https://docs.optimism.io/notices/archive/upgrade-16"
+  },
+  {
+    "name": "Aave V3 Pool (Base) v3.4 release",
+    "chain_id": 8453,
+    "proxy": "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5",
+    "prev_impl": "0x6ef6b6176091f94a8ad52c08e571f81598b226a2",
+    "next_impl": "0xec202552f0c23bb0c19df2f3311e324bbf015703",
+    "tx": "0x5a00c0f7b758b0e6aa9cd918d5bd69fa4281a05c2d5d4017324a02df5e8d7881",
+    "time": "2025-07-03T14:40:27Z",
+    "why_benign": "Same planned Aave v3.4 release delivered to Base through Aave's cross-chain governance path minutes before the Ethereum execution; only the L2PoolInstance implementation slot changed.",
+    "source": "https://governance.aave.com/t/arfc-bgd-aave-v3-4/21572"
+  },
+  {
+    "name": "Aave V3 Pool (Arbitrum) v3.4 release",
+    "chain_id": 42161,
+    "proxy": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+    "prev_impl": "0x7f775bb7af2e7e09d5dc9506c95516159a5ca0d0",
+    "next_impl": "0xa9022f64f4e86f1c9f4c07b248caa06b0af915d9",
+    "tx": "0x192900e1597722899cb45fc302b8d06739d9de3bbfba0002d7848dde1c240579",
+    "time": "2025-07-03T14:45:05Z",
+    "why_benign": "Arbitrum leg of the same scheduled Aave v3.4 rollout, executed via cross-chain governance on the same day as the other deployments; implementation-only change.",
+    "source": "https://governance.aave.com/t/arfc-bgd-aave-v3-4/21572"
+  },
+  {
+    "name": "Aave V3 Pool (Optimism) v3.4 release",
+    "chain_id": 10,
+    "proxy": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+    "prev_impl": "0x7f775bb7af2e7e09d5dc9506c95516159a5ca0d0",
+    "next_impl": "0x893b4d783e62e8bd46d93eda5599491ff8ad5c40",
+    "tx": "0x54b8b7ca4b27bff0e25b0eef04db4f0339f463148f3b6263849dd1cd38a7117e",
+    "time": "2025-07-03T14:39:47Z",
+    "why_benign": "Optimism leg of the same scheduled Aave v3.4 rollout, first of the four same-day executions; only the L2PoolInstance implementation was swapped.",
+    "source": "https://governance.aave.com/t/arfc-bgd-aave-v3-4/21572"
+  },
+  {
+    "name": "Optimism L2StandardBridge Karst hardfork upgrade",
+    "chain_id": 10,
+    "proxy": "0x4200000000000000000000000000000000000010",
+    "prev_impl": "0x2a5a3eabb9fd571a3af0299eebdf8eaafe29a914",
+    "next_impl": "0xae9ed42f43a3ee45c3a9def8ae6b48cbb58ed1a1",
+    "tx": "0xd2e9eb2ba77098610e7dda134e70f741f7456f4ec49912d667860c40988dfd8e",
+    "time": "2026-07-08T16:00:01Z",
+    "why_benign": "Karst (Upgrade 19) activation, delivered as a system deposit from the L1 attributes predeploy. The L2 Contract Manager repointed the predeploy proxy twice inside this single transaction - a transient StorageSetter hop (the previous Upgraded log, recorded here as prev_impl) and then the final L2StandardBridge implementation - which is OP's standard storage-migration pattern for scheduled hardforks.",
+    "source": "https://docs.optimism.io/op-stack/protocol/hardforks/karst"
+  }
+]
