@@ -44,7 +44,7 @@ export async function callDolphin({ messages, max_tokens, timeoutMs = 60000, sig
       }
     } else {
       text = await res.text();
-      try { body = JSON.parse(text); } catch {}
+      try { body = JSON.parse(text); } catch { body = null; }
     }
     rec.http_code = res.status;
     rec.headers_json = JSON.stringify(Object.fromEntries(res.headers.entries()));

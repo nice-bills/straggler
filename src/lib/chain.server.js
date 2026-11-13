@@ -34,10 +34,19 @@ export async function getUpgrades(chainId, proxy) {
 
 // Verified source of one contract: { name, files: { path: content } }. Throws if unverified.
 export async function getSources(chainId, address) {
-  const d = await getJson(`https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=sources,compilation`);
-  if (!d.sources) throw new Error(`No verified source for ${address}`);
-  return {
-    name: d.compilation?.name || "",
-    files: Object.fromEntries(Object.entries(d.sources).map(([p, v]) => [p, v.content || ""])),
-  };
+  try {
+    const d = await getJson(`https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=sources,compilation`);
+    if (!d.sources) throw new Error(`No verified source for ${address}`);
+    return { name: d.compilation?.name || "", files: Object.fromEntries(Object.entries(d.sources).map(([p, v]) => [p, v.content || ""])) };
+  } catch (sourcifyError) {
+    try {
+      const d = await getJson(`${CHAINS[chainId].scout}/api/v2/smart-contracts/${address}`);
+      const sources = [...(d.additional_sources || []), ...(d.source_code ? [{ file_path: d.file_path || `${d.name || "Contract"}.sol`, source_code: d.source_code }] : [])];
+      const files = Object.fromEntries(sources.filter((s) => s.source_code).map((s) => [s.file_path || s.name || "Contract.sol", s.source_code]));
+      if (!Object.keys(files).length) throw new Error(`No verified source for ${address}`);
+      return { name: d.name || "", files };
+    } catch {
+      throw sourcifyError;
+    }
+  }
 }
