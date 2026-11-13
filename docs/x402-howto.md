@@ -1,0 +1,18 @@
+# How to sell your proxy-upgrade-review endpoint as an x402 service on OpenServ
+
+Goal: charge per call for an existing HTTP endpoint `POST {chainId, proxy} -> JSON verdict` on OpenServ's x402 Agent Market (https://platform.openserv.ai/x402-services).
+
+## Path: custom agent + workflow with x402 trigger
+
+Monetization is **not** an agent capability — it is a **workflow with an `x402` trigger** wrapping your agent ([docs.openserv.ai/vibecode/openclaw/marketplace-agents-x402.md](https://docs.openserv.ai/vibecode/openclaw/marketplace-agents-x402.md)). Build a custom external (runnable) agent whose capability `run()` calls your HTTP endpoint ([docs.openserv.ai/vibecode/openclaw/openserv-sdk.md](https://docs.openserv.ai/vibecode/openclaw/openserv-sdk.md), [github.com/openserv-labs/sdk](https://github.com/openserv-labs/sdk)).
+
+## Steps
+
+1. **Account + keys**: sign up at [platform.openserv.ai](https://platform.openserv.ai) (Google login); copy a user API key from `Profile → API keys` ([github.com/openserv-labs/client README](https://github.com/openserv-labs/client) → Deploy prerequisites). `provision()` auto-generates `WALLET_PRIVATE_KEY` into `.env` on first run ([client README → Provision API]).
+2. **Write agent** (`src/agent.ts`, `npm i @openserv-labs/sdk @openserv-labs/client`): `new Agent({ systemPrompt })`, `agent.addCapability({ name:'review', description, inputSchema: z.object({ chainId, proxy }), async run({args}) { /* fetch your endpoint */ } })`, then `provision({ agent: {...}, workflow: { name:'Proxy Upgrade Reviewer', goal:'<detailed>', trigger: triggers.x402({ name, description, price:'0.01', input:{ chainId:{type:'string'}, proxy:{type:'string'} } }), task:{ description } } })` and `run(agent)` ([client README → Trigger factory: "name and description appear in the x402-services listing"]).
+3. **Pricing**: string `price` in the `x402` trigger = USDC per call, e.g. `'0.05'` ([client README → triggers.x402]).
+4. **Payout wallet/network**: USDC on **Base**. Resolved per trigger: `walletAddress` override → wallet from `client.authenticate(privateKey)` → address derived from `WALLET_PRIVATE_KEY` ([client README → "x402 Wallet Address Resolution"]). Fund only if you register ERC-8004 identity (needs Base ETH for gas) ([docs.openserv.ai/vibecode/openclaw/erc8004-identity.md](https://docs.openserv.ai/vibecode/openclaw/erc8004-identity.md)).
+5. **Activate + run**: activate the trigger and `workflows.setRunning()` ([docs.openserv.ai/vibecode/openclaw/marketplace-agents-x402.md](https://docs.openserv.ai/vibecode/openclaw/marketplace-agents-x402.md): "Always activate after creation"; "Custom agents must be running before triggering").
+6. **Listing**: `provision()` returns `paywallUrl` (`https://platform.openserv.ai/workspace/paywall/{token}`); endpoint URL is `https://api.openserv.ai/webhooks/x402/trigger/{token}` ([client README → Webhook/x402 URLs]). Listing at `/x402-services` is driven by the trigger's name/description. **Time-to-list: UNVERIFIED** (no doc states a delay).
+7. **Caller pays** with the platform client (handles the 402 → USDC-on-Base payment → retry automatically; caller sets `WALLET_PRIVATE_KEY`): `client.payments.payWorkflow({ triggerUrl, input: { chainId, proxy } })` ([client README → Payments (x402)]; preflight: `payments.getTriggerPreflight`). Raw curl cannot pay; any standard [x402.org](https://www.x402.org) client works, e.g. `wrapFetchWithPayment(fetch, account)` from `x402-fetch` — **UNVERIFIED against OpenServ specifically**.
+8. **Human-in-browser only**: account signup/login, dashboard API key creation, optional UI checks (paywall page, trigger graph). Everything else is SDK-automatable. Integrations UI is irrelevant for x402.

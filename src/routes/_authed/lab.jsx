@@ -9,7 +9,7 @@ import VisionTest from "@/components/lab/VisionTest";
 import { listRuns } from "@/lib/lab-fns";
 import { useLatencyRunner } from "@/hooks/useLatencyRunner";
 
-export const Route = createFileRoute("/_authed/")({
+export const Route = createFileRoute("/_authed/lab")({
   loader: () => listRuns(),
   head: () => ({ meta: [{ title: "Latency Lab · Straggler" }] }),
   component: LatencyLab,

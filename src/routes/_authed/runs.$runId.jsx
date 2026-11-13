@@ -16,7 +16,7 @@ function RunPage() {
   const { run, calls } = data;
   return (
     <div className="space-y-6">
-      <Link to="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3.5 w-3.5" /> Latency Lab</Link>
+      <Link to="/lab" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3.5 w-3.5" /> Latency Lab</Link>
       <p className="font-mono text-xs text-muted-foreground">
         conc {run.concurrency} · max_tokens {run.max_tokens} · {new Date(run.started_at).toLocaleString("en-GB", { timeZone: "UTC" })} UTC · “{run.prompt}”
       </p>

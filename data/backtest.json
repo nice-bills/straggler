@@ -1,0 +1,352 @@
+{
+  "cases": [
+    {
+      "name": "Nomad Bridge",
+      "chain_id": 1,
+      "kind": "upgrade",
+      "proxy_address": null,
+      "vulnerable_address": "0xB92336759618F55bd0F8313bd843604592E27bd8",
+      "previous_address": null,
+      "live_date": "2022-06-21",
+      "live_tx": "0x53fd92771d2084a9bf39a6477015ef53b7f116c79d98a21be723d06d79024cad",
+      "exploit_date": "2022-08-01",
+      "exploit_tx": "0xb1fe26cc8892f58eb468f5208baaf38bac422b5752cca0b9c8a871855d63ae28",
+      "loss_usd": 190000000,
+      "days_between": 41,
+      "was_audited": "yes",
+      "audit_note": "Quantstamp audited the Nomad stack; report item QSP-19 flagged that a zero trusted root should be rejected, but a zero _committedRoot was still used in the Replica initialize() and accepted as valid.",
+      "bug": "The freshly initialized Ethereum Replica was deployed with _committedRoot set to 0x00, which the routine root-confirmation path accepts as a proven root, letting anyone forge messages that withdraw funds from the bridge.",
+      "sources": [
+        "https://rekt.news/nomad-rekt/",
+        "https://eth.blockscout.com/api/v2/addresses/0xB92336759618F55bd0F8313bd843604592E27bd8",
+        "https://eth.blockscout.com/api/v2/transactions/0x53fd92771d2084a9bf39a6477015ef53b7f116c79d98a21be723d06d79024cad",
+        "https://eth.blockscout.com/api/v2/transactions/0xb1fe26cc8892f58eb468f5208baaf38bac422b5752cca0b9c8a871855d63ae28"
+      ],
+      "gaps": "Nomad's Replica is a standalone contract, not a proxy, so proxy_address is null and there is no previous implementation; 'previous_address' null reflects the architecture, not missing data. Loss figure is the rekt.news estimate."
+    },
+    {
+      "name": "Ronin Network (MainchainGatewayV3)",
+      "chain_id": 1,
+      "kind": "upgrade",
+      "proxy_address": "0xa71456fa88a5f6a4696d0446e690db4a5913fab0",
+      "vulnerable_address": "0xfc274ec92bbb1a1472884558d1b5caac6f8220ee",
+      "previous_address": null,
+      "live_date": "2024-08-06",
+      "live_tx": "0x855dd3b1194e3b889f4667b6a0996220e350e034d35d3eab29b4f23bc205767e",
+      "exploit_date": "2024-08-06",
+      "exploit_tx": "0x2619570088683e6cc3a38d93c3d98899e5783864e15525d5f5810c11189ba6cb",
+      "loss_usd": 12000000,
+      "days_between": 0,
+      "was_audited": "no",
+      "audit_note": "rekt.news tags the incident Unaudited; the new MainchainGatewayV3 implementation (deployed 6 days before the upgrade) was not audited.",
+      "bug": "The new implementation was initialized with initializeV4() instead of first running initializeV3(), leaving _totalOperatorWeight at zero and thereby disabling the minimum-vote-weight check, so a single compromised/attacker operator address could alone pass unlock (withdrawal) votes.",
+      "sources": [
+        "https://rekt.news/roninnetwork-rektii/",
+        "https://eth.blockscout.com/api/v2/transactions/0x855dd3b1194e3b889f4667b6a0996220e350e034d35d3eab29b4f23bc205767e",
+        "https://eth.blockscout.com/api/v2/transactions/0x2619570088683e6cc3a38d93c3d98899e5783864e15525d5f5810c11189ba6cb"
+      ],
+      "gaps": "The previous (V2) implementation address was not stated in any opened source, so previous_address is null. Attack was executed by MEV bot 0x4Ab12E7CE31857Ee022f273e8580F73335a73c0B in block 20468679; rekt leaderboard lists 08/07 but on-chain timestamps are 2024-08-06 08:48:47 UTC (upgrade) and 09:37:23 UTC (exploit), so both events are Aug 6 UTC."
+    },
+    {
+      "name": "LI.FI (GasZipFacet)",
+      "chain_id": 1,
+      "kind": "new_contract",
+      "proxy_address": null,
+      "vulnerable_address": "0xf28A352377663cA134bd27B582b1a9A4dad7e534",
+      "previous_address": null,
+      "live_date": "2024-07-11",
+      "live_tx": "0x058ffc047f2c621991c65facf62073848433e6a50b4673db59179cb018e91dc2",
+      "exploit_date": "2024-07-16",
+      "exploit_tx": null,
+      "loss_usd": 9730000,
+      "days_between": 5,
+      "was_audited": "unknown",
+      "audit_note": "rekt.news audit field shows n/a for this incident; no audit of the new facet was referenced.",
+      "bug": "The newly added GasZipFacet allowed arbitrary calldata to be injected into its swap validation, so anyone could craft a swap call that drained user-approved tokens from the LiFi diamond.",
+      "sources": [
+        "https://rekt.news/lifi-jumper-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0x058ffc047f2c621991c65facf62073848433e6a50b4673db59179cb018e91dc2"
+      ],
+      "gaps": "exploit_tx is null: the full hash of the first attack transaction was not present in any opened source; exploit date 2024-07-16 comes from the rekt article and a CertiK tweet (tweet-ID timestamp 2024-07-16 ~12:29 UTC). The facet was created via factory 0x93FEC2C00BfE902F733B57c5a6CeeD7CD1384AE1; the vulnerable diamond is 0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae, so proxy_address is null because the diamond is not an upgradeable proxy in the classic sense."
+    },
+    {
+      "name": "Socket (WrappedTokenSwapper route)",
+      "chain_id": 1,
+      "kind": "new_contract",
+      "proxy_address": null,
+      "vulnerable_address": "0xCC5fDA5e3cA925bd0bb428C8b2669496eE43067e",
+      "previous_address": null,
+      "live_date": "2024-01-13",
+      "live_tx": "0x021136b59f9001a394f1c04abbb7642fc21ab3d00654a14e48b00efaf9fd799f",
+      "exploit_date": "2024-01-16",
+      "exploit_tx": "0xc6c3331fa8c2d30e1ef208424c08c039a89e510df2fb6ae31e5aa40722e28fd6",
+      "loss_usd": 3300000,
+      "days_between": 3,
+      "was_audited": "yes",
+      "audit_note": "Socket had PeckShield and Consensys Diligence audits, but the newly registered WrappedTokenSwapper route was outside the audited scope.",
+      "bug": "The unvalidated swap logic in the newly added WrappedTokenSwapper implementation let an attacker pass a malicious swap target, causing the SocketGateway to transfer tokens on the attacker's terms.",
+      "sources": [
+        "https://rekt.news/socket-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0x021136b59f9001a394f1c04abbb7642fc21ab3d00654a14e48b00efaf9fd799f",
+        "https://eth.blockscout.com/api/v2/transactions/0x1df44e224c7a715da25fa33dcad2ca3a930d1a4dafd263e61c07b52673d505f4",
+        "https://eth.blockscout.com/api/v2/transactions/0xc6c3331fa8c2d30e1ef208424c08c039a89e510df2fb6ae31e5aa40722e28fd6"
+      ],
+      "gaps": "Route is a standalone implementation registered on SocketGateway 0x3a23f943181408eac424116af7b7790c94cb97a5 (registration tx 0x1df44e22...), so proxy_address and previous_address are null. Creation timestamp 2024-01-13 05:16:59 UTC verified on-chain; creator 0x8BE6C8b2cA6f39fd70C9DdF35B4c34301AE10c0F."
+    },
+    {
+      "name": "SushiSwap (RouteProcessor2)",
+      "chain_id": 1,
+      "kind": "new_contract",
+      "proxy_address": null,
+      "vulnerable_address": "0x044b75f554b886A065b9567891e45c79542d7357",
+      "previous_address": null,
+      "live_date": "2023-04-05",
+      "live_tx": "0x9a89d2f5528bf07661e92f3f78a3311396f11f15da19e3ec4d880be1ad1a4bec",
+      "exploit_date": "2023-04-09",
+      "exploit_tx": "0xea3480f1f1d1f0b32283f8f282ce16403fe22ede35c0b71a732193e56c5c45e8",
+      "loss_usd": 3300000,
+      "days_between": 4,
+      "was_audited": "no",
+      "audit_note": "rekt.news tags the incident Unaudited; no audit of RouteProcessor2 was referenced.",
+      "bug": "The uniswapV3SwapCallback in RouteProcessor2 did not verify that the calling pool was legitimately deployed by the canonical Uniswap V3 factory, letting the attacker spoof a pool and steal approved tokens during swaps.",
+      "sources": [
+        "https://rekt.news/sushi-yoink-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0x9a89d2f5528bf07661e92f3f78a3311396f11f15da19e3ec4d880be1ad1a4bec",
+        "https://eth.blockscout.com/api/v2/transactions/0xea3480f1f1d1f0b32283f8f282ce16403fe22ede35c0b71a732193e56c5c45e8"
+      ],
+      "gaps": "Standalone router contract (not a proxy), so proxy_address and previous_address are null. live timestamp 2023-04-05 06:46:59 UTC and exploit timestamp 2023-04-09 02:35:23 UTC verified on-chain."
+    },
+    {
+      "name": "Unizen",
+      "chain_id": 1,
+      "kind": "upgrade",
+      "proxy_address": "0xd3f64BAa732061F8B3626ee44bab354f854877AC",
+      "vulnerable_address": "0xA051Fc7D38bAa0ace811ad9DE4E9f7024e5d8A30",
+      "previous_address": null,
+      "live_date": "2024-03-08",
+      "live_tx": "0x858c71876a5ad43ffe27f227ad01979f3bd5de95e66194e98cea41f53a43ef59",
+      "exploit_date": "2024-03-08",
+      "exploit_tx": "0xc12a4155c2c90707138e4aef8883c8f724371145823e2f661f19b93e5b3a9d6e",
+      "loss_usd": 2100000,
+      "days_between": 0,
+      "was_audited": "yes",
+      "audit_note": "Protocol had Halborn and Verichains audits from 2022, but the March 2024 upgrade itself was not audited (rekt.news lists Halborn, Verichains).",
+      "bug": "The freshly upgraded contract performed an external call without verifying its destination, letting the attacker redirect the swap/transfer flow and drain funds held by the proxy.",
+      "sources": [
+        "https://rekt.news/unizen-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0x858c71876a5ad43ffe27f227ad01979f3bd5de95e66194e98cea41f53a43ef59",
+        "https://eth.blockscout.com/api/v2/transactions/0xc12a4155c2c90707138e4aef8883c8f724371145823e2f661f19b93e5b3a9d6e"
+      ],
+      "gaps": "previous_address null (prior implementation not identified in opened sources). The proxy is TransparentUpgradeableProxy 0xd3f64BAa... (current post-fix implementation 0x97B8210dFe6e970190c7496511F7318C91756a8b per blockscout); the linkage between the created implementation 0xA051Fc7D... and the proxy at upgrade time is presumed from the upgrade tx but was not directly confirmed. Upgrade timestamp 2024-03-08 12:38:23 UTC, exploit 20:13:35 UTC; a second attack tx 0x30fef86a72ea7e1109ffeae572439995c78561ffeb968dcbd61c609efc60fdd9. Loss is rekt's $2.1M (leaderboard's $21M appears to be a factor-of-10 error)."
+    },
+    {
+      "name": "Sonne Finance (soVELO market)",
+      "chain_id": 10,
+      "kind": "new_contract",
+      "proxy_address": null,
+      "vulnerable_address": "0xe3b81318B1b6776F0877c3770AfDdFf97b9f5fE5",
+      "previous_address": null,
+      "live_date": "2024-05-10",
+      "live_tx": "0x307b85a2fe776aad28ecc347e73170706850fea560479c78e7705c9332fb0feb",
+      "exploit_date": "2024-05-14",
+      "exploit_tx": "0x9312ae377d7ebdf3c7c3a86f80514878deb5df51aad38b6191d55db53e42b7f0",
+      "loss_usd": 20000000,
+      "days_between": 4,
+      "was_audited": "yes",
+      "audit_note": "yAudit's 2023 audit had explicitly flagged this Hundred-Finance-style donation attack vector forVELO-collateral markets; the vulnerability went live anyway when the new market was configured.",
+      "bug": "When the newly deployed VELO market's collateral factor was set to 35% by governance, the interest-rate model allowed a self-transfer/donation attack: an attacker could mint, donate soVELO to inflate exchange rate accounting, borrow against it, and drain the market of liquidity.",
+      "sources": [
+        "https://rekt.news/sonne-finance-rekt/",
+        "https://optimism.blockscout.com/api/v2/transactions/0x307b85a2fe776aad28ecc347e73170706850fea560479c78e7705c9332fb0feb",
+        "https://optimism.blockscout.com/api/v2/transactions/0x9312ae377d7ebdf3c7c3a86f80514878deb5df51aad38b6191d55db53e42b7f0"
+      ],
+      "gaps": "soVELO is an immutable CErc20 contract (not a proxy), so proxy_address and previous_address are null. Creation timestamp 2024-05-10 13:40:13 UTC verified on-chain (deployer 0xFb59Ce8986943163F14C590755b29dB2998F2322, 'Sonne VelodromeV2'); exploit tx timestamp 2024-05-14 22:18:15 UTC. Attacker 0xae4A7cDe7C99fb98B0D5fA414aa40F0300531F43 used attack contract 0x02FA2625825917E9b1F8346a465dE1bBC150C5B9. rekt leaderboard dates it 05/15; on-chain date is May 14 UTC."
+    },
+    {
+      "name": "Bedrock (uniBTC Vault)",
+      "chain_id": 1,
+      "kind": "upgrade",
+      "proxy_address": "0x047D41F2544B7F63A8e991aF2068a363d210d6Da",
+      "vulnerable_address": "0x702696b2aA47fD1D4feAAF03CE273009Dc47D901",
+      "previous_address": null,
+      "live_date": "2024-09-25",
+      "live_tx": "0x39d910b499899eb14282c4d7b849d53b1fb1db3139522cad6d1a77e22c6410b6",
+      "exploit_date": "2024-09-26",
+      "exploit_tx": "0x725f0d65340c859e0f64e72ca8260220c526c3e0ccde530004160809f6177940",
+      "loss_usd": 2000000,
+      "days_between": 1,
+      "was_audited": "no",
+      "audit_note": "The upgraded SigmaSupplier implementation was not audited (rekt.news audit field N/A for the incident).",
+      "bug": "In the new SigmaSupplier implementation NATIVE_BTC was never registered in the token mapping, so totalSupply read as zero, which bypassed the mint-cap check and let the attacker mint 30.8 uniBTC against only 30.8 ETH of real collateral.",
+      "sources": [
+        "https://rekt.news/bedrock-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0x39d910b499899eb14282c4d7b849d53b1fb1db3139522cad6d1a77e22c6410b6",
+        "https://eth.blockscout.com/api/v2/transactions/0x725f0d65340c859e0f64e72ca8260220c526c3e0ccde530004160809f6177940"
+      ],
+      "gaps": "previous_address null and the proxy-upgrade transaction hash unconfirmed: the implementation creation tx (2024-09-25 03:33:11 UTC) was verified on-chain, but the tx that actually pointed the proxy (in place since 2024-04-13) at the new implementation was not found in opened sources. Exploiter per rekt: 0x2bFB373017349820dda2Da8230E6b66739BE9F96; exploit tx timestamp 2024-09-26 18:28:23 UTC."
+    },
+    {
+      "name": "Level Finance (claimMultiple)",
+      "chain_id": 56,
+      "kind": "upgrade",
+      "proxy_address": "0x977087422C008233615b572fBC3F209Ed300063a",
+      "vulnerable_address": "0x9f00fbd6c095d2c542687ed5afb68d9c3fb2f464",
+      "previous_address": null,
+      "live_date": "2023-04-18",
+      "live_tx": "0xe0a8e635f4778f6cc935873d8c17a92979eb9adfa77b249dec1d4a15b3e82909",
+      "exploit_date": "2023-05-01",
+      "exploit_tx": "0xe1f257041872c075cbe6a1212827bc346df3def6d01a07914e4006ec43027165",
+      "loss_usd": 1100000,
+      "days_between": 13,
+      "was_audited": "yes",
+      "audit_note": "Quantstamp and Obelisk had audited Level Finance; Quantstamp's post-mortem states the vulnerability was introduced in the upgrade after the audits.",
+      "bug": "The upgraded LiquidityPool claimMultiple() implementation failed to mark claimed epochs as spent, allowing the same liquidity-pool tokens to be repeatedly claimed against across epochs and drained of rewards.",
+      "sources": [
+        "https://rekt.news/level-finance-rekt/"
+      ],
+      "gaps": "BSC explorer (bscscan) was unreachable in this environment, so the Apr-18-2023 upgrade and May-1-2023 exploit tx hashes/timestamps are taken from the rekt article and Quantstamp's public statement rather than verified on-chain; previous_address (implementation before the upgrade) was not identified."
+    },
+    {
+      "name": "Radiant Capital (attacker-upgraded lending pools)",
+      "chain_id": 42161,
+      "kind": "upgrade",
+      "proxy_address": "0xF4B1486DD74D07706052A33d31d7c0AAFD0659E1",
+      "vulnerable_address": "0x57ba8957ed2ff2e7AE38F4935451E81Ce1eEFbf5",
+      "previous_address": null,
+      "live_date": null,
+      "live_tx": null,
+      "exploit_date": "2024-10-16",
+      "exploit_tx": "0x7856552db409fe51e17339ab1e0e1ce9c85d68bf0f4de4c110fc4e372ea02fb1",
+      "loss_usd": 53000000,
+      "days_between": null,
+      "was_audited": "no",
+      "audit_note": "The attacker-deployed implementation was by definition not audited; the compromise vector was a 3-of-11 Safe multisig signing transaction.",
+      "bug": "After the multisig was compromised, the attacker upgraded the lending pool proxies to a malicious implementation containing a backdoor that transferred the pools' funds to the attacker.",
+      "sources": [
+        "https://rekt.news/radiant-capital-rekt2/",
+        "https://arbiscan.io/tx/0x7856552db409fe51e17339ab1e0e1ce9c85d68bf0f4de4c110fc4e372ea02fb1"
+      ],
+      "gaps": "live_date/live_tx null: rekt says the malicious implementation was 'deployed 14 days ago' (about Oct 2, 2024) but the actual upgrade-go-live transaction could not be confirmed, so days_between is null. Malicious impl copies: Base 0x57ba8957... (ARB), plus ETH 0x3C2Bc83Dcd293Cc8a23526A37aaeEdD83eBd62de and BSC 0xd50Cf00b6e600Dd036Ba8eF475677d816d6c4281; pool proxies: ARB 0xF4B1486DD74D07706052A33d31d7c0AAFD0659E1, BSC 0xd50Cf00b6e600Dd036Ba8eF475677d816d6c4281, ETH 0xA950974f64aA33f27F6C5e017eEE93BF7588ED07, Base 0x30798cFe2CCa822321ceed7e6085e633aAbC492F. BSC exploit tx 0xd97b93f633aee356d992b49193e60a571b8c466bf46aaf072368f975dc11841c; a failed attempt on ARB occurred 6 days prior (0xab34055320676b35d4c6c5936dabc4101b45eda0d66b94ee02f10a96e8a1dd45). Arbitrum/BSC explorers were bot-blocked in this environment, so hashes come from the rekt article without on-chain timestamp confirmation; previous_address null (pre-attack implementation not identified)."
+    },
+    {
+      "name": "Conic Finance (CurveLPOracleV2 reentrancy)",
+      "chain_id": 1,
+      "kind": "new_contract",
+      "proxy_address": null,
+      "vulnerable_address": null,
+      "previous_address": null,
+      "live_date": null,
+      "live_tx": null,
+      "exploit_date": "2023-07-21",
+      "exploit_tx": "0x8b74995d1d61d3d7547575649136b8765acb22882960f0636941c44ec7bbe146",
+      "loss_usd": 4200000,
+      "days_between": null,
+      "was_audited": "yes",
+      "audit_note": "PeckShield had audited Conic; PeckShield's own analysis noted the newly introduced CurveLPOracleV2 was not part of the audit scope.",
+      "bug": "The newly introduced CurveLPOracleV2 was vulnerable to a read-only reentrancy attack during uniswap/curve price reads, letting the attacker manipulate LP pricing and drain the UniversalERC20/ETH pools.",
+      "sources": [
+        "https://rekt.news/conic-finance-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0x8b74995d1d61d3d7547575649136b8765acb22882960f0636941c44ec7bbe146"
+      ],
+      "gaps": "vulnerable_address, live_date, live_tx and days_between null: the exact address of CurveLPOracleV2 and its deployment/go-live transaction were not stated in any opened source (only PeckShield's quote within the rekt article names the contract). Attacker contract 0x743599BA5CfA3cE8c59691aF5ef279AaaFA2E4EB. Loss $4.2M total ($3.3M + $934k across two pools); exploit timestamp 2023-07-21 10:35:11 UTC verified on-chain."
+    },
+    {
+      "name": "Platypus Finance (USP)",
+      "chain_id": 43114,
+      "kind": "new_contract",
+      "proxy_address": null,
+      "vulnerable_address": null,
+      "previous_address": null,
+      "live_date": "2023-02-06",
+      "live_tx": null,
+      "exploit_date": "2023-02-16",
+      "exploit_tx": "0x1266a937c2ccd970e5d7929021eed3ec593a95c68a99b4920c2efa226679b430",
+      "loss_usd": 8500000,
+      "days_between": 10,
+      "was_audited": "no",
+      "audit_note": "rekt.news tags the incident Unaudited; the new USP component was not audited at launch.",
+      "bug": "The emergencyWithdraw/liquidation path's solvency check did not account for borrowed USP in the pool's liabilities, so the attacker could open a USP position, borrow against it, then liquidate themselves profitably, draining pooled assets.",
+      "sources": [
+        "https://rekt.news/platypus-finance-rekt/",
+        "https://medium.com/platypus-finance/platypus-recap-the-2022-2023-transition-503ca5483076"
+      ],
+      "gaps": "vulnerable_address and previous_address null: no opened source names the specific vulnerable pool contract address. live_tx null: the USP contract's deployment transaction was not identified; live_date 2023-02-06 comes from Platypus' own Medium recap, and rekt states the exploit occurred 'just 10 days after launch'. Snowtrace/AVAX explorers were unavailable, so the exploit tx hash comes from the rekt article without on-chain timestamp confirmation; tweet-ID timestamps (zachxbt 2023-02-16 ~21:38 UTC, Platypus announcement 2023-02-17 ~01:42 UTC) place the exploit on Feb 16 UTC, while the rekt leaderboard lists 02/17 - discrepancy noted. Attack contract 0x67afdd6489d40a01dae65f709367e1b1d18a5322."
+    },
+    {
+      "name": "Pike Finance",
+      "chain_id": 1,
+      "kind": "upgrade",
+      "proxy_address": "0xFC7599cfFea9De127a9f9C748CCb451a34d2F063",
+      "vulnerable_address": "0x1da4Bc596BFb1087f2F7999b0340Fcba03C47fbD",
+      "previous_address": null,
+      "live_date": null,
+      "live_tx": null,
+      "exploit_date": "2024-04-30",
+      "exploit_tx": "0xe2912b8bf34d561983f2ae95f34e33ecc7792a2905a3e317fcc98052bce66431",
+      "loss_usd": 1900000,
+      "days_between": null,
+      "was_audited": "no",
+      "audit_note": "No public audit found for Pike Finance at the time of the incident (rekt.news tag: unaudited).",
+      "bug": "A late-April pause upgrade shifted the storage layout so the initialized flag resolved to false, making the contracts appear uninitialized; the attacker re-initialized them with their own parameters and then used upgradeToAndCall to install a malicious implementation and drain cross-chain funds.",
+      "sources": [
+        "https://rekt.news/pike-rekt/",
+        "https://eth.blockscout.com/api/v2/transactions/0xe2912b8bf34d561983f2ae95f34e33ecc7792a2905a3e317fcc98052bce66431"
+      ],
+      "gaps": "live_date/live_tx null: the pause-upgrade transaction happened between Apr 26 and Apr 30, 2024 but its exact date/hash was not confirmed in opened sources (an Apr-26-2024 pause tx 0x979ad9b7f5331ea8034305a83b5cd50aea88adec395fff8298dd90eb1b87667f on the Arbitrum target 0x7856493B59cdb1685757A6DcCe12425F6a6666a0 was identified), so days_between is null. Proxy ERC1967 0xFC7599cf... created via 0x0fcc85422e9726a5d8b2ce00291051df0167089e0d1a5e66bfac908c0769e05d by deployer 0xb1eA97c9F68978905fB1Bf5089E71A073bC4f5C8; malicious implementation 0x1da4Bc596BFb1087f2F7999b0340Fcba03C47fbD is the proxy's current implementation per blockscout. Exploit timestamp 2024-04-30 22:19:11 UTC verified on-chain; attacker 0x19066f7431df29a0910d287c8822936bb7d89e23. previous_address (implementation before the pause upgrade) not identified."
+    }
+  ],
+  "dropped": [
+    {
+      "name": "Abracadabra Money (MIM)",
+      "reason": "Rounding bug resided in legacy CauldronV4 code live since 2021; no recent proxy upgrade or new contract preceded the 2024 exploit."
+    },
+    {
+      "name": "Seneca",
+      "reason": "The vulnerable borrow function had been flawed since the protocol's launch; no recent go-live."
+    },
+    {
+      "name": "zkLend",
+      "reason": "Exploit occurred on Starknet (StarkEx/Cairo), not EVM; out of scope."
+    },
+    {
+      "name": "KiloEx",
+      "reason": "Oracle price-feed address could be set by anyone due to access-control flaw; not a code change that went live shortly before the exploit."
+    },
+    {
+      "name": "Zunami Protocol",
+      "reason": "No confirmed go-live date for the vulnerable change could be established from opened sources."
+    },
+    {
+      "name": "Hundred Finance",
+      "reason": "Donation attack on an empty hWBTC market; the market/bug was not a recent go-live (2023 exploit, vector flagged earlier)."
+    },
+    {
+      "name": "Raft",
+      "reason": "Donation/rounding attack exploitable against long-standing code; no recent change preceded the exploit."
+    },
+    {
+      "name": "DeltaPrime",
+      "reason": "Root cause was compromise of the deployer/admin private key, not newly deployed code."
+    },
+    {
+      "name": "Wormhole",
+      "reason": "Core bug was in the Solana SPL side of the bridge, not EVM code."
+    },
+    {
+      "name": "Penpie",
+      "reason": "Bug was in long-standing MasterPenpie batch-registration logic; not a recent go-live."
+    },
+    {
+      "name": "Team Finance",
+      "reason": "Migration (LockerTokenMigration) go-live date could not be confirmed from opened sources."
+    },
+    {
+      "name": "Hedgey Finance",
+      "reason": "ClaimCampaigns contract went live Nov 22, 2023 but was exploited Apr 19, 2024 (~5 months); outside the straggler window."
+    },
+    {
+      "name": "Audius",
+      "reason": "Storage-collision bug in the proxy existed since deployment; no recent upgrade preceded the exploit."
+    }
+  ]
+}

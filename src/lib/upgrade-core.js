@@ -1,8 +1,27 @@
 // Pure logic for reviewing one contract upgrade. Code decides what changed; the model only explains it.
 import { parseJson } from "@/lib/triage-core";
 
-const squash = (s) => s.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, "");
+export const squash = (s) => s.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, "");
 const base = (p) => p.split("/").pop();
+const clean = (p) => p.replace(/^\.?\//, "");
+
+// Maps each deployed path to the repo path holding the same file, or null when none or more than one fits.
+export function matchFiles(deployedPaths, repoPaths) {
+  const repos = repoPaths.map(clean);
+  const out = {};
+  for (const raw of deployedPaths) {
+    const p = clean(raw);
+    let best = null;
+    // deployed paths often carry a prefix the repo does not: lib/aave-v3-origin/src/X.sol -> src/X.sol
+    for (const r of repos) if ((p === r || p.endsWith(`/${r}`)) && (!best || r.length > best.length)) best = r;
+    if (!best) {
+      const same = repos.filter((r) => base(r) === base(p));
+      if (same.length === 1) best = same[0];
+    }
+    out[raw] = best;
+  }
+  return out;
+}
 
 // name -> body for every function, modifier, constructor, fallback and receive in a Solidity file.
 export function functionsOf(src) {

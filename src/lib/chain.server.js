@@ -14,16 +14,35 @@ async function getJson(url) {
       if (!res.ok) throw new Error(`${res.status} from ${new URL(url).host}`);
       return await res.json();
     } catch (e) {
-      if (attempt === 3) throw e;
+      if (attempt === 5 || /^404 /.test(e.message)) throw e;
+      await new Promise((r) => setTimeout(r, 1500 * 2 ** attempt)); // backs off Blockscout 429s
     }
   }
+}
+
+const ROUTESCAN = "https://api.routescan.io/v2/network/mainnet/evm";
+
+// Etherscan-style getsourcecode: SourceCode is plain Solidity, or standard JSON input wrapped in {{ }}.
+async function routescanSources(chainId, address) {
+  const r = (await getJson(`${ROUTESCAN}/${chainId}/etherscan/api?module=contract&action=getsourcecode&address=${address}`)).result?.[0];
+  if (!r?.SourceCode) throw new Error(`No verified source for ${address}`);
+  let files;
+  try {
+    const j = JSON.parse(r.SourceCode.startsWith("{{") ? r.SourceCode.slice(1, -1) : r.SourceCode);
+    files = Object.fromEntries(Object.entries(j.sources || j).map(([p, v]) => [p, v.content || ""]));
+  } catch {
+    files = { [`${r.ContractName || "Contract"}.sol`]: r.SourceCode };
+  }
+  return { name: r.ContractName || "", files };
 }
 
 // Every implementation the proxy has pointed at, oldest first.
 export async function getUpgrades(chainId, proxy) {
   const chain = CHAINS[chainId];
   if (!chain) throw new Error(`Unsupported chain ${chainId}`);
-  const d = await getJson(`${chain.scout}/api?module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${proxy}&topic0=${UPGRADED}`);
+  const q = `module=logs&action=getLogs&fromBlock=0&toBlock=latest&address=${proxy}&topic0=${UPGRADED}`;
+  // Routescan first (keyless, Etherscan-style); Blockscout when Routescan fails.
+  const d = await getJson(`${ROUTESCAN}/${chainId}/etherscan/api?${q}`).catch(() => getJson(`${chain.scout}/api?${q}`));
   return (d.result || []).map((l) => ({
     impl: "0x" + l.topics[1].slice(-40),
     time: new Date(parseInt(l.timeStamp, 16) * 1000).toISOString(),
@@ -39,6 +58,9 @@ export async function getSources(chainId, address) {
     if (!d.sources) throw new Error(`No verified source for ${address}`);
     return { name: d.compilation?.name || "", files: Object.fromEntries(Object.entries(d.sources).map(([p, v]) => [p, v.content || ""])) };
   } catch (sourcifyError) {
+    try {
+      return await routescanSources(chainId, address);
+    } catch { /* fall through to Blockscout */ }
     try {
       const d = await getJson(`${CHAINS[chainId].scout}/api/v2/smart-contracts/${address}`);
       const sources = [...(d.additional_sources || []), ...(d.source_code ? [{ file_path: d.file_path || `${d.name || "Contract"}.sol`, source_code: d.source_code }] : [])];

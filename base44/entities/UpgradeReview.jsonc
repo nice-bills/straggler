@@ -1,0 +1,15 @@
+{
+  "name": "UpgradeReview",
+  "type": "object",
+  "properties": {
+    "result": { "type": "string", "description": "Full serialized proxy upgrade review result" },
+    "chain_id": { "type": "number" },
+    "proxy": { "type": "string" },
+    "verdict": { "type": "string" },
+    "block": { "type": "number" },
+    "tx": { "type": "string" },
+    "time": { "type": "string" }
+  },
+  "required": ["result", "chain_id", "proxy", "verdict"],
+  "rls": { "read": true, "create": false, "update": false, "delete": false }
+}

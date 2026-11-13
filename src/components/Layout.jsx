@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/AuthContext";
 
 const NAV = [
-  { to: "/", label: "Latency Lab" },
+  { to: "/lab", label: "Latency Lab" },
   { to: "/compare", label: "Compare" },
   { to: "/triage", label: "Triage" },
   { to: "/cases", label: "Cases" },
