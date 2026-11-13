@@ -4,7 +4,7 @@ import { callServ } from "@/lib/serv.server";
 import { checkCoverage } from "@/lib/coverage.server";
 import { diffSources, buildUpgradeMessages, validateReview, verdictOf } from "@/lib/upgrade-core";
 import { hedge } from "@/lib/triage-core";
-import protocols from "../../data/protocols.json";
+import protocols from "../../data/protocols.json" with { type: "json" };
 
 const asReview = (p) => ({ summary: p.summary, changes: p.changes.map(({ file, function: fn, touches_funds, risk, quote, struck }) => ({ file, function: fn, touches_funds, risk, quote, struck })) });
 
